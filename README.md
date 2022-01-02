@@ -25,9 +25,9 @@ Multus CNI 插件允许 Pod 在 Kubernetes 中拥有多个接口。对 Multus �
 在此设置中，我们使用 CloudFormation 模板来创建基础架构、EKS 集群和自我管理的节点组。 基础设施模板预配 Amazon Virtual Private Cloud (VPC)、集群和 Multus 的公有和私有子网，以及执行 EKS 操作的堡垒主机。 节点模板创建附加 ENI 的工作节点，以运行多宿主 Pod。 这两个 AWS CloudFormation 模板共同创建了以下资源： 
 
 * 基础设施创建模板 
-** VpcCidr：将用于部署的 VPC CIDR。
-** AvailabilityZones：根据 EKS 要求至少有两个可用区。
-** PublicSubnet1/2：这些子网将托管堡垒主机以运行 kubectl 命令。 此外，这将托管 NAT-GW，为私有子网提供互联网访问。
+    - VpcCidr：将用于部署的 VPC CIDR。
+    - AvailabilityZones：根据 EKS 要求至少有两个可用区。
+    - PublicSubnet1/2：这些子网将托管堡垒主机以运行 kubectl 命令。 此外，这将托管 NAT-GW，为私有子网提供互联网访问。
 ** PrivateSubnetAz1/2：AZ1 和 AZ2 中 EKS 控制平面的子网。
 ** MultusSubnet1Az1/2：Multus 将用于在示例 Pod 中创建辅助接口的第一个子网。
 ** MultusSubnet2Az1/2：Multus 将用于在示例 Pod 中创建辅助接口的第二个子网。
