@@ -64,3 +64,44 @@ Multus CNI 插件允许 Pod 在 Kubernetes 中拥有多个接口。对 Multus �
 等待 CloudFormation 堆栈完成（CREATE COMPLETE）。 创建了一个具有两个公有和私有 EKS 子网、四个 Multus 子网（每个可用区两个）、一个 EKS 集群、IGW 和 NAT-GW 的 Amazon VPC。 该堆栈还为 Multus 子网和控制平面安全组构建安全组。 
 
 从名为“eks-multus-cluster”的堆栈的 CloudFormation 控制台输出记录 *EksCluster*、*EksControlSecurityGroup*、*PrivateSubnetAz1/2*、*MultusSubnet1/2Az1/2*、*MultusSecurityGroup* 和 *VpcId*。 此外，从基础架构输出记录 *BastionPublicIp*。 您将在下一节中需要此 IP。 
+
+## 堡垒主机配置 
+**要使用 SSH 连接到您的堡垒：**
+
+在终端窗口中，使用 ssh 命令连接到实例。 指定私钥（.pem）的路径和文件名，即上一步记录的公网ip。 要连接到您的实例，请输入以下命令。 
+```
+ssh -i /path/my-key-pair.pem ec2-user@BastionPublicIp
+```
+
+您将看到如下响应： 
+```
+The authenticity of host 'ec2-198-51-100-1.compute-1.amazonaws.com (198-51-100-1)' can't be established.
+ECDSA key fingerprint is l4UB/neBad9tvkgJf1QZWxheQmR59WgrgzEimCG6kZY.
+Are you sure you want to continue connecting (yes/no) 
+```
+
+输入"Yes"
+**配置AWS CLI**
+
+您可以使用临时凭证来运行与管理员配置文件链接的 AWS CLI 命令。 您将使用自己的密钥（以下密钥不适用于您的环境）。 
+```
+export AWS_ACCESS_KEY_ID=AKIAIOSFODNN7EXAMPLE
+export AWS_SECRET_ACCESS_KEY=wJalrXUtnFEMI/K7MDENG/bPxRfiCYEX...
+export AWS_DEFAULT_REGION=us-west-2
+export AWS_SESSION_TOKEN=FJ9BrbSXgCN4XYxFin+QYXsG8L6+lMMkMIv9xwZC48UqpwII9P.....
+```
+
+使用以下命令确认凭据。 
+```
+aws sts get-caller-identity
+```
+
+输出：
+```
+{
+"Account": "my-account",
+"UserId": "CROAY6YKLVK242KL6D5W3:my-user-id",
+"Arn": "arn:aws:sts::my-account:assumed-role/Admin/my-user-id"
+}
+```
+
