@@ -212,20 +212,20 @@ kubectl get pods -n kube-system
 
 接下来，我们将为添加到 pod 的每个附加接口创建配置。 Multus 提供名为 NetworkAttachmentDefinition 的自定义资源定义 (CRD)。 我们将使用这个 CRD 来构建额外的界面设置。 
 
-**创建ipvlan-conf-1**
+**创建host-device-1**
 
-使用 ipvlan CNI 为 pod 配置一个额外的接口（来自 Multus 子网 10.0.4.0/24）。 将配置应用到集群。 
+使用 host-device CNI 为 pod 配置一个额外的接口（来自 Multus 子网 10.0.4.0/24）。 将配置应用到集群。 
 
 ```
 cat <<EOF | kubectl apply -f -
 apiVersion: "k8s.cni.cncf.io/v1"
 kind: NetworkAttachmentDefinition
 metadata:
-  name: ipvlan-conf-1
+  name: host-device-1
 spec:
   config: '{
-      "cniVersion": "0.3.0",
-      "type": "ipvlan",
+      "cniVersion": "0.3.1",
+      "type": "host-device",
       "master": "eth1",
       "mode": "l3",
       "ipam": {
@@ -238,3 +238,20 @@ spec:
     }'
 EOF
 ```
+
+通过运行以下命令验证配置。
+```
+kubectl describe network-attachment-definitions
+```
+
+要了解有关网络连接的配置选择和示例的更多信息，请参阅 [Multus 使用指南](https://github.com/k8snetworkplumbingwg/multus-cni/blob/master/docs/how-to-use.md)。 
+
+由于官方的案例并为提供DPDK应用范例，所以DPDK网络接口测试需要客户自行提供应用测试。
+
+## 结论
+
+在这篇文章中，我们介绍了 Multus CNI 及其可能的用例。我们还使用 Multus CNI 创建了一个 Amazon EKS 集群，并为示例 Pod 配置了额外的网络定义以显示流量拆分。
+
+请注意，当前对 Multus CNI 的支持不包括对 pods 辅助网络接口或其他更高阶接口的本机配置支持。这包括工作节点上 Multus 管理接口的 IPAM（ENI 标记为 no_manage: true）以及与更高阶 pod 接口相关联的 CNI 驱动程序和配置。在我们继续为 EKS 客户改进 Multus 体验的同时，请在 GitHub 上提供的 AWS 容器路线图上提供反馈并建议新功能。
+
+
