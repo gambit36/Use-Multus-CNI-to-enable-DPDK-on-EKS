@@ -246,7 +246,7 @@ kubectl describe network-attachment-definitions
 
 要了解有关网络连接的配置选择和示例的更多信息，请参阅 [Multus 使用指南](https://github.com/k8snetworkplumbingwg/multus-cni/blob/master/docs/how-to-use.md)。 
 
-由于官方的案例并为提供DPDK应用范例，所以DPDK网络接口测试需要客户自行提供应用测试。
+由于官方的案例并为提供DPDK应用范例，所以DPDK网络接口测试需要客户自行提供应用测试。另外客户需要自行修改Node AMI去打开DPDK功能，或直接使用marketplace中的EKS Optimized with DPDK AMI.
 
 ## 结论
 
