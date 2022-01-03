@@ -124,3 +124,26 @@ kubectl get svc
 NAME TYPE CLUSTER-IP EXTERNAL-IP PORT(S) AGE
 kubernetes ClusterIP 172.20.0.1 <none> 443/TCP 31m
 ```
+## 第 2 步： 创建节点组
+
+作为此步骤的一部分，我们将创建自我管理的节点组。 此步骤需要在先决条件下创建的 S3 存储桶以及基础设施堆栈是完整的。 或者，在新选项卡中打开基础架构堆栈 CloudFormation 输出控制台。 节点组堆栈将使用这些输出。 
+
+**运行 CloudFormation 模板以创建节点组 **
+1. 使用您的管理员权限登录 AWS 管理控制台并转到 CloudFormation。
+2. 单击创建堆栈 → 使用新资源（标准）。
+3. 指定模板，并上传模板文件。
+4. 从本地存储库位置选择 [eks-install-guide-for-multus/cfn/templates/node-group/eks-nodegroup-multus.yaml](https://github.com/aws-samples/eks-install-guide-for-multus/blob/main/cfn/templates/nodegroup/eks-nodegroup-multus.yaml) 文件。
+5. 从之前的堆栈创建中指定集群名称和集群控制平面安全组
+6. 输入堆栈名称 multus-cluster-ng01。
+7. 输入 multus-cluster-ng01 作为节点组名称。
+8. 为节点自动缩放组所需容量、最大和最小大小指定 1。
+9. 选择 c5.large 作为实例类型，选择 20 作为卷大小。
+10. 使用默认节点 ImageId SSM 参数并留空以使用默认 EKS AMI。
+11. 选择在先决条件部分下创建的 EC2 密钥对。
+12. 您可以使用 bootstrap 的默认参数。
+13. 选择 vpc-eks-multus-cluster VPC Id。
+14. 选择将在其中创建工作程序的 EKS 子网 (privateAz1-eks-multus-cluster)。
+15. 指定 Multus 子网（multus1Az1-eks-multus-cluster、multus2Az1-eks-multus-cluster）。
+16. 输入 Multus 安全组，eks-multus-cluster-MultusSecurityGroup*
+17. 将 lambda S3 存储桶名称指定为 eks-multus-cluster，将 S3 密钥指定为 lambda_function.zip。
+18. 单击下一步 → 我确认(I Acknowledge) → 创建堆栈。 
