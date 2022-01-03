@@ -60,3 +60,7 @@ Multus CNI 插件允许 Pod 在 Kubernetes 中拥有多个接口。对 Multus �
 8. 从下拉列表中选择 EC2 密钥对名称。
 9. 在本练习中，您可以使用默认的 AMI Id。
 10. 单击下一步 → 我确认 → 创建堆栈。 
+
+等待 CloudFormation 堆栈完成（CREATE COMPLETE）。 创建了一个具有两个公有和私有 EKS 子网、四个 Multus 子网（每个可用区两个）、一个 EKS 集群、IGW 和 NAT-GW 的 Amazon VPC。 该堆栈还为 Multus 子网和控制平面安全组构建安全组。 
+
+从名为“eks-multus-cluster”的堆栈的 CloudFormation 控制台输出记录 *EksCluster*、*EksControlSecurityGroup*、*PrivateSubnetAz1/2*、*MultusSubnet1/2Az1/2*、*MultusSecurityGroup* 和 *VpcId*。 此外，从基础架构输出记录 *BastionPublicIp*。 您将在下一节中需要此 IP。 
