@@ -33,3 +33,8 @@ Multus CNI 插件允许 Pod 在 Kubernetes 中拥有多个接口。对 Multus �
     - MultusSubnet2Az1/2：Multus 将用于在示例 Pod 中创建辅助接口的第二个子网。
     - BastionInstance：我们可以从 (kubectl) 运行 EKS 集群操作的堡垒主机。
     - EksCluster：将运行示例工作负载的 EKS 集群。 
+* EKS 工作节点组创建模板 
+    - NodeGroup：运行示例 Pod 的工作节点组。
+    - LambdaAttachCNI：Lambda 函数，用于将额外的 Multus 子网连接到工作节点。
+    - EventbridgeEventRule：CloudWatch 事件规则，用于监控实例向上和向下扩展以触发 Lambda 钩子将额外的弹性网络接口 (ENI) 从 Multus 子网附加到工作程序节点组。 
+
