@@ -147,3 +147,35 @@ kubernetes ClusterIP 172.20.0.1 <none> 443/TCP 31m
 16. 输入 Multus 安全组，eks-multus-cluster-MultusSecurityGroup*
 17. 将 lambda S3 存储桶名称指定为 eks-multus-cluster，将 S3 密钥指定为 lambda_function.zip。
 18. 单击下一步 → 我确认(I Acknowledge) → 创建堆栈。 
+
+等待 CloudFormation 堆栈完成（CREATE COMPLETE）。 为了从定义的 Multus 子网附加 ENI，节点组堆栈部署 AWS Lambda 函数和 Amazon CloudWatch 事件规则。 该堆栈启动带有从 Multus 子网附加的 ENI 以及标签 *no_manage: true* 的 EC2 实例。 AWS VPC CNI 不会管理 ENI 的标记 *no_manage: true*。 这是 Multus 为 Pod 管理额外网络的必要步骤。 
+
+从 CloudFormation 控制台输出记录 **NodeInstanceRole**。
+
+**应用 K8s ConfigMap 更新  **
+
+登录 bastion 主机，您可以在其中运行 kubectl 命令。
+
+下载、编辑和应用 AWS authenticator配置映射： 
+
+```
+curl -o aws-auth-cm.yaml https://s3.us-west-2.amazonaws.com/amazon-eks/cloudformation/2020-10-29/aws-auth-cm.yaml
+```
+
+使用您喜欢的文本编辑器打开文件。 将“rolearn”替换为 NodeInstanceRole（工作节点组 CloudFormation 堆栈的输出）并保存文件。 不要修改此文件中的任何其他行。 
+
+```
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: aws-auth
+  namespace: kube-system
+data:
+  mapRoles: |
+    - rolearn: arn:aws:iam::my-account:role/worker-nodegroup-01-NodeInstanceRole-1M3F6VK25IKB0
+      username: system:node:{{EC2PrivateDNSName}}
+      groups:
+        - system:bootstrappers
+        - system:nodes
+```
+
