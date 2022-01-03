@@ -38,3 +38,4 @@ Multus CNI 插件允许 Pod 在 Kubernetes 中拥有多个接口。对 Multus �
     - LambdaAttachCNI：Lambda 函数，用于将额外的 Multus 子网连接到工作节点。
     - EventbridgeEventRule：CloudWatch 事件规则，用于监控实例向上和向下扩展以触发 Lambda 钩子将额外的弹性网络接口 (ENI) 从 Multus 子网附加到工作程序节点组。 
 
+![image](arch2.png)
