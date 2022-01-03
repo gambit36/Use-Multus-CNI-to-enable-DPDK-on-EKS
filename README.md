@@ -179,3 +179,62 @@ data:
         - system:nodes
 ```
 
+
+应用配置。 此命令可能需要几分钟才能完成。 
+```
+kubectl apply -f aws-auth-cm.yaml
+```
+
+观察节点的状态并等待它们达到就绪状态。 
+```
+kubectl get nodes --watch
+```
+
+## 第 3 步：安装和配置 Multus 
+
+**使用daemonset安装 Multus CNI **
+
+登录 bastion 主机，您可以在其中运行 kubectl 命令。
+
+运行以下命令下载并安装 Multus daemonset。 此命令将 AWS VPC CNI 配置为 Multus CNI 的默认委托插件。 
+
+```
+kubectl apply -f https://raw.githubusercontent.com/aws/amazon-vpc-cni-k8s/master/config/multus/v3.7.2-eksbuild.1/aws-k8s-multus.yaml
+```
+
+通过运行以下命令验证部署。 每个节点都应该有一个名为 kube-multus-ds 的 pod。 
+
+```
+kubectl get pods -n kube-system
+```
+
+**创建额外的接口**
+
+接下来，我们将为添加到 pod 的每个附加接口创建配置。 Multus 提供名为 NetworkAttachmentDefinition 的自定义资源定义 (CRD)。 我们将使用这个 CRD 来构建额外的界面设置。 
+
+**创建ipvlan-conf-1**
+
+使用 ipvlan CNI 为 pod 配置一个额外的接口（来自 Multus 子网 10.0.4.0/24）。 将配置应用到集群。 
+
+```
+cat <<EOF | kubectl apply -f -
+apiVersion: "k8s.cni.cncf.io/v1"
+kind: NetworkAttachmentDefinition
+metadata:
+  name: ipvlan-conf-1
+spec:
+  config: '{
+      "cniVersion": "0.3.0",
+      "type": "ipvlan",
+      "master": "eth1",
+      "mode": "l3",
+      "ipam": {
+        "type": "host-local",
+        "subnet": "10.0.4.0/24",
+        "rangeStart": "10.0.4.70",
+        "rangeEnd": "10.0.4.80",
+        "gateway": "10.0.4.1"
+      }
+    }'
+EOF
+```
