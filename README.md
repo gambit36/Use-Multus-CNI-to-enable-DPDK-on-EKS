@@ -104,4 +104,23 @@ aws sts get-caller-identity
 "Arn": "arn:aws:sts::my-account:assumed-role/Admin/my-user-id"
 }
 ```
-
+**安装配置 kubectl**
+```
+curl -o kubectl https://amazon-eks.s3-us-west-2.amazonaws.com/1.21.2/2021-07-05/bin/linux/amd64/kubectl
+curl -o kubectl.sha256 https://amazon-eks.s3.us-west-2.amazonaws.com/1.21.2/2021-07-05/bin/linux/amd64/kubectl.sha256
+openssl sha1 -sha256 kubectl
+chmod +x ./kubectl
+mkdir -p $HOME/bin && cp ./kubectl $HOME/bin/kubectl && export PATH=$PATH:$HOME/bin
+echo 'export PATH=$PATH:$HOME/bin' >> ~/.bashrc
+kubectl version —short —client
+```
+**使用AWS CLI创建kubeconfig :**
+```
+aws eks update-kubeconfig --name eks-multus-cluster
+kubectl get svc
+```
+输出
+```
+NAME TYPE CLUSTER-IP EXTERNAL-IP PORT(S) AGE
+kubernetes ClusterIP 172.20.0.1 <none> 443/TCP 31m
+```
