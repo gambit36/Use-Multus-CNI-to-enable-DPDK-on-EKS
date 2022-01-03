@@ -39,3 +39,24 @@ Multus CNI 插件允许 Pod 在 Kubernetes 中拥有多个接口。对 Multus �
     - EventbridgeEventRule：CloudWatch 事件规则，用于监控实例向上和向下扩展以触发 Lambda 钩子将额外的弹性网络接口 (ENI) 从 Multus 子网附加到工作程序节点组。 
 
 ![image](arch2.png)
+
+## 先决条件
+* 具有管理员权限的 AWS 账户：在本博客中，我们假设您已经拥有一个具有管理员权限的 AWS 账户。
+* 使用 AWS 管理控制台创建 EC2 密钥对（EC2 用户指南中提到了这些步骤）。
+* 命令行工具：Mac/Linux 用户需要在他们的工作站上安装最新版本的 AWS CLI、aws-iam-authenticator 和 git。而 Windows 用户可能希望在 AWS 中使用 Cloud9 环境，然后在他们的 Cloud9 环境中安装这些 CLI。
+* 要开始安装 Multus，请在本地工作站或 Cloud9 实例上克隆 eks-install-guide-for-multus github 存储库。
+* 在您最近克隆存储库的本地文件夹中找到 eks-install-guide-for-multus/cfn/templates/cfn/nodegroup/lambda_function.zip 文件。在 AWS 管理控制台中导航到 S3 并创建一个名为 eks-multus-cluster 的存储桶。选择与 EKS 集群相同的 AWS 区域，其余保持默认。在新形成的存储桶上单​​击“上传”。点击“添加文件”。上传 lambda_function.zip。在运行“供应工作节点组”部分中描述的工作节点组的 CloudFormation 时，S3 存储桶名称将用作输入参数之一。 
+
+## 第 1 步：创建 VPC 和 EKS 集群 
+
+运行 CloudFormation 以创建基础架构
+1. 使用您的管理员权限登录 AWS 控制台，然后转到 CloudFormation。
+2. 单击创建堆栈 → 使用新资源（标准）。
+3. 上传模板文件并选择“eks-install-guide-for-multus/cfn/templates/infra/eks-infra.yaml”。
+4. 输入堆栈名称“eks-multus-cluster”，堆栈名称也将是 EKS 集群名称。
+5. 从下拉列表中选择两个可用区。
+6. 使用默认 VPC CIDR (10.0.0.0/16) 块和子网范围。
+7. 选择堡垒实例类型（默认，t3-medium 也可以）。
+8. 从下拉列表中选择 EC2 密钥对名称。
+9. 在本练习中，您可以使用默认的 AMI Id。
+10. 单击下一步 → 我确认 → 创建堆栈。 
